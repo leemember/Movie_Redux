@@ -2,7 +2,7 @@
 
 ## 🔍 **결과물 미리보기**
 
-![](https://images.velog.io/images/leemember/post/e5d32eb4-ad72-485e-972e-152f1a10b6bd/%E1%84%85%E1%85%B5%E1%84%83%E1%85%A5%E1%86%A8%E1%84%89%E1%85%B3.gif)
+![](https://images.velog.io/images/leemember/post/283f6ea7-ab65-43b5-86b7-e001bb71041d/reqrqr.gif)
 <br>
 
 ## 💻 **리덕스 구현한 코드 미리보기**
