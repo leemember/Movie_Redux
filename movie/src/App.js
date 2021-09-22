@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from "react";
 import styled, { createGlobalStyle } from "styled-components";
+import { LOAD_MOVIES_REQUEST } from "./reducers/movies";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import List from "./Components/List";
 
 function App() {
   const [movies, setMovies] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     axios
       .get("https://yts-proxy.now.sh/list_movies.json?sort_by=rating")
       .then((res) => setMovies(res.data.data.movies));
   }, []);
+
+  useEffect(() => {
+    dispatch({
+      type: LOAD_MOVIES_REQUEST,
+    });
+  }, [dispatch]);
 
   console.log(movies);
 

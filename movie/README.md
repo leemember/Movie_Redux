@@ -75,11 +75,11 @@ export default App;
 
 > 참고 👉 https://ko.redux.js.org/tutorials/quick-start
 
-`Redux는 "액션"이라는 이벤트를 사용`하여 애플리케이션 상태를 관리하고 업데이트하기 위한 패턴 및 라이브러리이며, Redux는 애플리케이션의 많은 부분에 필요한 "전역" 상태를 관리하는 데 도움이 됩니다. 
+`Redux는 "액션"이라는 이벤트를 사용`하여 애플리케이션 상태를 관리하고 업데이트하기 위한 패턴 및 라이브러리이며, Redux는 애플리케이션의 많은 부분에 필요한 "전역" 상태를 관리하는 데 도움이 됩니다.
 
-이는 상태가 예측 가능한 방식으로만 업데이트될 수 있도록 보장하는 규칙과 함께 전체 애플리케이션에서 사용해야 하는 `상태에 대한 중앙 저장소 역할`을 합니다. 
+이는 상태가 예측 가능한 방식으로만 업데이트될 수 있도록 보장하는 규칙과 함께 전체 애플리케이션에서 사용해야 하는 `상태에 대한 중앙 저장소 역할`을 합니다.
 
-Redux에서 제공하는 패턴과 도구를 사용하면 애플리케이션의 상태가 언제, 어디서, 왜, 어떻게 업데이트되는지, 이러한 변경이 발생할 때 애플리케이션 로직이 어떻게 작동하는지 쉽게 이해할 수 있습니다 . 
+Redux에서 제공하는 패턴과 도구를 사용하면 애플리케이션의 상태가 언제, 어디서, 왜, 어떻게 업데이트되는지, 이러한 변경이 발생할 때 애플리케이션 로직이 어떻게 작동하는지 쉽게 이해할 수 있습니다 .
 
 <br />
 
@@ -98,3 +98,113 @@ Redux에서 제공하는 패턴과 도구를 사용하면 애플리케이션의 
 - ES6
 - React 용어에 대한 지식 (JSX, State, 컴포넌트, Props, Hooks)
 - JS 비동기 처리, Ajax 요청에 대한 지식
+
+<br />
+
+### Redux-Saga 연동하기
+
+리덕스의 미들웨어로서 리덕스의 기능을 향상 시켜주는 기능이다. 이러한 미들웨어 속성을 사용하여 네트워크 요청과 같은 <비동기 작업>을 관리하면 매우 유용하다.
+
+특정 액션이 디스패치 되었을 때 정해진 로직에 따라 다른 액션을 디스패치 시키는 규칙을 작성하여 비동기 작업을 처리할 수 있게 해준다.
+
+```
+$yarn add redux-saga
+```
+
+```
+export default function* rootSaga() {
+  //saga에는 제너레이터 함수를 사용한다.
+  //function 뒤에 * 붙는 것으로 시작
+}
+```
+
+## ⭐️ 리덕스 사가를 사용하는 이유
+
+1. 기존 요청을 취소 처리해야 할 때 (불필요한 중복 요청 방지)
+2. 특정 액션이 발생했을 때 다른 액션을 발생시키거나, API 요청 등
+3. 리덕스와 관계없는 코드를 실행할 때
+4. 웹 소켓을 이용할 때
+5. API 요청 실패 시 재요청해야 할 때
+
+<br />
+
+## ⭐️ 리덕스 사가에서 알아두면 유용한 기능들
+
+```
+improt { delay, put, takeEvery, takeLatest, select } from 'redux-saga/effects';
+
+📍takeEvery : 들어오는 모든 액션에 대해 특정 작업을 처리해준다.
+📍takeLatest : 기존에 진행 중이던 작업이 있다면 취소 처리하고 가장 마지막으로 실행된 작업만 수행한다.
+📍select : 사가 내부에서 현재 상태를 조회하는 방법이다.
+📍delay : 시간을 지정해서 기다린다. (1초 = 1000)
+📍put : 특정 액션을 디스패치 해준다.
+📍throttle : 사가가 실행되는 주기를 제한하는 방법
+```
+
+## ⭐️ Saga와 떼놓을 수 없는 immer 알아보기
+
+```
+$yarn add immer
+```
+
+```
+ase ADD_COMMENT_SUCCESS: {
+  const postIndex = state.mainPosts.findIndex((v)=> v.id === action.data.postId);
+  const post = 📍{ ...state.mainPosts[postIndex]  };
+  post.Comments = [dummyComment(action.data.content), ...post.Comments];
+  const mainPosts = 📍[...state.mainPosts];
+  mainPosts[postIndex] = post;
+  return {📍
+    ...state,
+    mainPosts,
+    addCommentLoading: false,
+    addCommentDone: true
+  };
+}
+```
+
+이런식의 불변성 코드의 경우 잘못하면 에러나기 쉽상이다. 이럴 때는 `immer`라는 라이브러리를 사용하면 보다 효율적으로 코딩할 수 있다. 불변성 코드를 짜는 경우 이 immer 라이브러리는 필수이다.
+
+## ⭐️ immer 의 특징
+
+1. 이걸 사용하면 ... 같은 걸 안봐도 되서 코드가 훨씬 깔끔해진다.
+2. 바로 배열에다 넣고 사용하면 된다.
+3. 알아서 불변성 지켜서 다음상태를 만들어준다.
+4. 코드 보기가 편해진다.
+
+### immer 적용하게 되면 이렇게 간결해진다.
+
+```
+case REMOVE_POST_FAILURE:
+  draft.removePostLoading = false;
+  draft.removePostError = action.error;
+  break;
+```
+
+break문은 필수.
+
+```
+ase ADD_COMMENT_SUCCESS: {
+  const postIndex = state.mainPosts.findIndex((v)=> v.id === action.data.postId);
+  const post = 📍{ ...state.mainPosts[postIndex]  };
+  post.Comments = [dummyComment(action.data.content), ...post.Comments];
+  const mainPosts = 📍[...state.mainPosts];
+  mainPosts[postIndex] = post;
+  return {📍
+    ...state,
+    mainPosts,
+    addCommentLoading: false,
+    addCommentDone: true
+  };
+}
+
+👆 이랬던 코드가
+---------------------------
+👇 이렇게 된다.
+
+case REMOVE_POST_FAILURE:
+  draft.removePostLoading = false;
+  draft.removePostError = action.error;
+  break;
+
+```
